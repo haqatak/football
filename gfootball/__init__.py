@@ -16,8 +16,8 @@
 
 from gfootball.env import scenario_builder
 
-import gym
-from gym.envs.registration import register
+import gymnasium as gym
+from gymnasium.envs.registration import register
 
 
 for env_name in scenario_builder.all_scenarios():

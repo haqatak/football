@@ -77,7 +77,7 @@ class CustomBuild(build_ext):
       # Copy them all
       libs = glob.glob(f'third_party/gfootball_engine/_gameplayfootball*.so')
       copy_compiled_libs(libs, dest_dir)
-    copy_fonts(dest_dir)
+    # copy_fonts(dest_dir)  # Skip font copying for now
 
   def run_windows(self):
     guide_message = 'Please follow the guide on how to install prerequisites: ' \
@@ -112,7 +112,7 @@ class CustomBuild(build_ext):
     lib_path = 'third_party/gfootball_engine/build_win/Release/'
     libs = glob.glob(f'{lib_path}*.pyd') + glob.glob(f'{lib_path}*.dll')
     copy_compiled_libs(libs, dest_dir)
-    copy_fonts(dest_dir)
+    # copy_fonts(dest_dir)  # Skip font copying for now
 
 
 def copy_compiled_libs(libs, dest_dir):
@@ -129,7 +129,21 @@ def copy_fonts(dest_dir):
   """Copy fonts to the destination directory."""
   dst_fonts = os.path.join(dest_dir, "fonts")
   if not os.path.exists(dst_fonts):
-    shutil.copytree("third_party/fonts", dst_fonts)
+    # Ensure the destination directory exists
+    os.makedirs(dest_dir, exist_ok=True)
+    try:
+      shutil.copytree("third_party/fonts", dst_fonts)
+    except (OSError, shutil.Error) as e:
+      # If the destination already exists or there's another error, try to copy individual files
+      if os.path.exists(dst_fonts):
+        return  # Already exists, skip
+      # Create the fonts directory and copy files individually
+      os.makedirs(dst_fonts, exist_ok=True)
+      for item in os.listdir("third_party/fonts"):
+        src = os.path.join("third_party/fonts", item)
+        dst = os.path.join(dst_fonts, item)
+        if os.path.isfile(src):
+          shutil.copy2(src, dst)
 
 
 def process_develop_setup():
@@ -185,7 +199,7 @@ setup(
         'opencv-python',
         'psutil',
         'numpy',
-        'gym<=0.21.0',
+        'gymnasium',
         'absl-py',
         'wheel',
     ],
