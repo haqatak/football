@@ -180,7 +180,7 @@ class FootballEnv(gym.Env):
                 [-reward] * self._agent.num_controlled_right_players())
     self._cached_observation = None
     info['score_reward'] = score_reward
-    return (self.observation(), np.array(reward, dtype=np.float32), done, info)
+    return (self.observation(), np.array(reward, dtype=np.float32), done, False, info)
 
   def reset(self, *, seed=None, options=None):
     self._env.reset()
