@@ -94,7 +94,6 @@ Match::Match(MatchData *matchData, const std::vector<AIControlledKeyboard *> &co
       }
       GetContext().animPositionCache.insert(std::pair < Animation*, std::vector<Vector3> >(someAnim, positions));
     }
-    GetVertexColors(GetContext().colorCoords);
   } else {
     for (auto& a : anims->GetAnimations()) {
       a->DirtyCache();
@@ -124,8 +123,22 @@ Match::Match(MatchData *matchData, const std::vector<AIControlledKeyboard *> &co
                            : GetScenarioConfig().left_team_difficulty);
   teams[first_team]->SetOpponent(teams[second_team]);
   teams[second_team]->SetOpponent(teams[first_team]);
-  teams[first_team]->InitPlayers(GetContext().fullbodyNode, GetContext().colorCoords);
-  teams[second_team]->InitPlayers(GetContext().fullbodyNode, GetContext().colorCoords);
+
+  std::map<Vector3, Vector3> leftColorCoords;
+  Vector3 left_color1 = Vector3(GetScenarioConfig().left_team_color[0],
+                                GetScenarioConfig().left_team_color[1],
+                                GetScenarioConfig().left_team_color[2]);
+  Vector3 left_color2 = left_color1 * 0.5;
+  GetVertexColors(leftColorCoords, left_color1, left_color2);
+  teams[first_team]->InitPlayers(GetContext().fullbodyNode, leftColorCoords);
+
+  std::map<Vector3, Vector3> rightColorCoords;
+  Vector3 right_color1 = Vector3(GetScenarioConfig().right_team_color[0],
+                                 GetScenarioConfig().right_team_color[1],
+                                 GetScenarioConfig().right_team_color[2]);
+  Vector3 right_color2 = right_color1 * 0.5;
+  GetVertexColors(rightColorCoords, right_color1, right_color2);
+  teams[second_team]->InitPlayers(GetContext().fullbodyNode, rightColorCoords);
 
   std::vector<Player*> activePlayers;
   teams[first_team]->GetActivePlayers(activePlayers);
@@ -134,11 +147,12 @@ Match::Match(MatchData *matchData, const std::vector<AIControlledKeyboard *> &co
 
 
   // officials
-
+  std::map<Vector3, Vector3> defaultColorCoords;
+  GetVertexColors(defaultColorCoords, Vector3(0.1, 0.1, 0.1), Vector3(0.8, 0.8, 0.8));
   std::string kitFilename = "media/objects/players/textures/referee_kit.png";
   boost::intrusive_ptr<Resource<Surface> > kit =
       GetContext().surface_manager.Fetch(kitFilename);
-  officials = new Officials(this, GetContext().fullbodyNode, GetContext().colorCoords, kit, anims);
+  officials = new Officials(this, GetContext().fullbodyNode, defaultColorCoords, kit, anims);
 
   dynamicNode->AddObject(officials->GetYellowCardGeom());
   dynamicNode->AddObject(officials->GetRedCardGeom());

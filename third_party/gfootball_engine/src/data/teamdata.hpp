@@ -32,6 +32,9 @@ class TeamData {
 
   public:
     TeamData(int teamDatabaseID, const std::vector<FormationEntry>& f);
+    TeamData(const std::string &name, const std::string &shortName,
+             const Vector3 &color1, const Vector3 &color2,
+             const std::vector<FormationEntry> &f, int teamDatabaseID = 3);
     ~TeamData();
 
     std::string GetName() const { return name; }

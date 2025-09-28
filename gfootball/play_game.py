@@ -37,6 +37,14 @@ flags.DEFINE_enum('action_set', 'default', ['default', 'full'], 'Action set')
 flags.DEFINE_bool('real_time', True,
                   'If true, environment will slow down so humans can play.')
 flags.DEFINE_bool('render', True, 'Whether to do game rendering.')
+flags.DEFINE_string('left_team_name', 'Red Team', 'Name of the left team')
+flags.DEFINE_string('right_team_name', 'Blue Team', 'Name of the right team')
+flags.DEFINE_string('left_team_short_name', 'RED', 'Short name of the left team')
+flags.DEFINE_string('right_team_short_name', 'BLU', 'Short name of the right team')
+flags.DEFINE_string('left_team_color', '0.8,0.2,0.2',
+                    'Color of the left team (R,G,B)')
+flags.DEFINE_string('right_team_color', '0.2,0.2,0.8',
+                    'Color of the right team (R,G,B)')
 
 
 def main(_):
@@ -48,6 +56,12 @@ def main(_):
       'dump_full_episodes': True,
       'players': players,
       'real_time': FLAGS.real_time,
+      'left_team_name': FLAGS.left_team_name,
+      'right_team_name': FLAGS.right_team_name,
+      'left_team_short_name': FLAGS.left_team_short_name,
+      'right_team_short_name': FLAGS.right_team_short_name,
+      'left_team_color': [float(x) for x in FLAGS.left_team_color.split(',')],
+      'right_team_color': [float(x) for x in FLAGS.right_team_color.split(',')],
   }
   if FLAGS.level:
     cfg_values['level'] = FLAGS.level

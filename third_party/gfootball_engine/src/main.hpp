@@ -152,6 +152,12 @@ struct ScenarioConfig {
     state->process(game_duration);
     state->process(second_half);
     state->process(control_all_players);
+    state->process(left_team_name);
+    state->process(right_team_name);
+    state->process(left_team_short_name);
+    state->process(right_team_short_name);
+    state->process(left_team_color);
+    state->process(right_team_color);
   }
 
   void ProcessState(EnvState* state) {
@@ -199,9 +205,22 @@ struct ScenarioConfig {
   int game_duration = 3000;
   bool control_all_players = false;
   int second_half = 999999999;
+  std::string left_team_name;
+  std::string right_team_name;
+  std::string left_team_short_name;
+  std::string right_team_short_name;
+  std::vector<float> left_team_color;
+  std::vector<float> right_team_color;
 
  private:
-  ScenarioConfig() { }
+  ScenarioConfig() {
+    left_team_color.push_back(0.8f);
+    left_team_color.push_back(0.2f);
+    left_team_color.push_back(0.2f);
+    right_team_color.push_back(0.2f);
+    right_team_color.push_back(0.2f);
+    right_team_color.push_back(0.8f);
+  }
   void ComputeCache() {
     if (cache_computed) {
       return;
@@ -279,7 +298,6 @@ class GameContext {
   BiasedOffsets emptyOffsets;
   boost::shared_ptr<AnimCollection> anims;
   std::map<Animation*, std::vector<Vector3>> animPositionCache;
-  std::map<Vector3, Vector3> colorCoords;
   int step = 0;
   int tracker_disabled = 1;
   long tracker_pos = 0;
