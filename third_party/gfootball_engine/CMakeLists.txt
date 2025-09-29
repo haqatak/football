@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 
 if(WIN32)
   # Check for required Environment variables
@@ -95,7 +95,8 @@ endif()
 message("Using Python: ${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}")
 include_directories(${Python_INCLUDE_DIRS})
 if(NOT WIN32 AND ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.15")
-  set(Py_TARGETS Python::Module)
+  # Use hardcoded Python libraries instead of Python::Module
+  set(Py_TARGETS ${Python_LIBRARIES})
 else()
   set(Py_TARGETS ${Python_LIBRARIES})
 endif()
@@ -123,7 +124,7 @@ else()
 endif()
 message("Using Boost.Python: ${BOOST_PYTHON_VERSION}")
 
-FIND_PACKAGE(Boost REQUIRED COMPONENTS thread system filesystem ${BOOST_PYTHON_VERSION})
+FIND_PACKAGE(Boost REQUIRED COMPONENTS thread filesystem ${BOOST_PYTHON_VERSION})
 include_directories(${Boost_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
@@ -166,7 +167,7 @@ elseif(WIN32)
 endif()
 
 set(LIBRARIES gamelib menulib datalib blunted2
-   Boost::filesystem Boost::system Boost::thread Boost::${BOOST_PYTHON_VERSION}
+   Boost::filesystem Boost::thread Boost::${BOOST_PYTHON_VERSION}
    ${Py_TARGETS} ${SDL2_LIBS_ALL} ${EGL_LIBRARIES} ${OPENGL_LIBRARIES})
 
 add_library(${OUTPUT_LIB_NAME} SHARED ${CORE_SOURCES} ${CORE_HEADERS} ${AI_HEADERS} ${AI_SOURCES})

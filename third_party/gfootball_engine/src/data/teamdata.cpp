@@ -296,6 +296,204 @@ TeamData::~TeamData() {
   }
 }
 
+TeamData::TeamData(const std::string &name, const std::string &shortName,
+                   const Vector3 &color1, const Vector3 &color2,
+                   const std::vector<FormationEntry> &f, int teamDatabaseID) {
+  DO_VALIDATION;
+  this->name = name;
+  this->shortName = shortName;
+  this->color1 = color1;
+  this->color2 = color2;
+  this->logo_url = "";
+  this->kit_url = "";
+  if (this->shortName.compare("") == 0) {
+    DO_VALIDATION;
+    this->shortName = this->name;
+    this->shortName.erase(remove_if(this->shortName.begin(), this->shortName.end(), isspace),
+                    this->shortName.end());
+    this->shortName = boost::to_upper_copy(this->shortName.substr(0, 3));
+  }
+
+  formation.resize(f.empty() ? playerNum : f.size());
+  int player_count = formation.size();
+
+  const std::string formationString =
+      "<p1><position> -1.0,  0.0</position><role>GK</role></p1>"
+      "<p2><position> -0.7,  0.75</position><role>LB</role></p2>"
+      "<p3><position> -1.0,  0.25</position><role>CB</role></p3>"
+      "<p4><position> -1.0, -0.25</position><role>CB</role></p4>"
+      "<p5><position> -0.7, -0.75</position><role>RB</role></p5>"
+      "<p6><position>  0.0,  0.5 </position><role>CM</role></p6>"
+      "<p7><position> -0.2,  0.0 </position><role>CM</role></p7>"
+      "<p8><position>  0.0, -0.5 </position><role>CM</role></p8>"
+      "<p9><position>  0.6,  0.75 </position><role>LM</role></p9>"
+      "<p10><position> 1.0,  0.0 </position><role>CF</role></p10>"
+      "<p11><position> 0.6, -0.75 </position><role>RM</role></p11>";
+  const std::string tacticsString =
+      "<dribble_centermagnet>0.720000</"
+      "dribble_centermagnet><dribble_offensiveness>0.500000</"
+      "dribble_offensiveness><position_defense_depth_factor>0.300000</"
+      "position_defense_depth_factor><position_defense_microfocus_strength>"
+      "0.960000</"
+      "position_defense_microfocus_strength><position_defense_"
+      "midfieldfocus>0.960000</"
+      "position_defense_midfieldfocus><position_defense_sidefocus_strength>"
+      "0.160000</"
+      "position_defense_sidefocus_strength><position_defense_width_factor>"
+      "0.700000</"
+      "position_defense_width_factor><position_offense_depth_factor>0."
+      "340000</"
+      "position_offense_depth_factor><position_offense_microfocus_strength>"
+      "0.920000</"
+      "position_offense_microfocus_strength><position_offense_"
+      "midfieldfocus>0.880000</"
+      "position_offense_midfieldfocus><position_offense_sidefocus_strength>"
+      "0.880000</"
+      "position_offense_sidefocus_strength><position_offense_width_factor>"
+      "0.740000</position_offense_width_factor>";
+  const std::string factoryTacticsString =
+      "<dribble_centermagnet>0.720000</"
+      "dribble_centermagnet><dribble_offensiveness>0.500000</"
+      "dribble_offensiveness><position_defense_depth_factor>0.300000</"
+      "position_defense_depth_factor><position_defense_microfocus_strength>"
+      "0.960000</"
+      "position_defense_microfocus_strength><position_defense_"
+      "midfieldfocus>0.960000</"
+      "position_defense_midfieldfocus><position_defense_sidefocus_strength>"
+      "0.160000</"
+      "position_defense_sidefocus_strength><position_defense_width_factor>"
+      "0.700000</"
+      "position_defense_width_factor><position_offense_depth_factor>0."
+      "340000</"
+      "position_offense_depth_factor><position_offense_microfocus_strength>"
+      "0.920000</"
+      "position_offense_microfocus_strength><position_offense_"
+      "midfieldfocus>0.880000</"
+      "position_offense_midfieldfocus><position_offense_sidefocus_strength>"
+      "0.880000</"
+      "position_offense_sidefocus_strength><position_offense_width_factor>"
+      "0.740000</position_offense_width_factor>";
+
+  // team formation
+  XMLLoader loader;
+  XMLTree tree = loader.Load(formationString);
+  map_XMLTree::const_iterator iter = tree.children.begin();
+
+  while (iter != tree.children.end()) {
+    DO_VALIDATION;
+    for (int num = 0; num < player_count; num++) {
+      DO_VALIDATION;
+      if ((*iter).first == "p" + int_to_str(num + 1)) {
+        DO_VALIDATION;
+        Vector3 databasePosition = GetVectorFromString(
+            (*iter).second.children.find("position")->second.value);
+        formation[num].role = GetRoleFromString(
+            (*iter).second.children.find("role")->second.value);
+
+        formation[num].position = databasePosition * 0.6f +
+            GetDefaultRolePosition(formation[num].role) * 0.4f;
+      }
+    }
+
+    iter++;
+  }
+
+  float minDistanceFraction = 0.5f;
+  unsigned int maxIterations = 10;
+  unsigned int iterations = 0;
+  bool changed = true;
+
+  while (changed && iterations < maxIterations) {
+    DO_VALIDATION;
+#ifdef WIN32
+    std::vector<Vector3> offset(player_count);
+#else
+    Vector3 offset[player_count];
+#endif
+
+    changed = false;
+    for (int p1 = 0; p1 < player_count - 1; p1++) {
+      DO_VALIDATION;
+      if (formation[p1].role == e_PlayerRole_GK) continue;
+
+      for (int p2 = p1 + 1; p2 < player_count; p2++) {
+        DO_VALIDATION;
+        if (formation[p2].role == e_PlayerRole_GK) continue;
+
+        Vector3 diff = (formation[p1].position - formation[p2].position);
+
+        if (diff.GetLength() < minDistanceFraction) {
+          DO_VALIDATION;
+          changed = true;
+
+          float distanceFactor =
+              1.0f - (diff.GetLength() / minDistanceFraction);
+
+          offset[p1] += diff.GetNormalized(Vector3(0, 1, 0)) *
+                        minDistanceFraction * distanceFactor * 0.5f;
+          offset[p2] -= diff.GetNormalized(Vector3(0, 1, 0)) *
+                        minDistanceFraction * distanceFactor * 0.5f;
+        }
+      }
+    }
+
+    if (changed) {
+      DO_VALIDATION;
+      for (int p = 0; p < player_count; p++) {
+        DO_VALIDATION;
+        formation[p].position += offset[p];
+        formation[p].position.coords[0] =
+            clamp(formation[p].position.coords[0], -1, 1);
+        formation[p].position.coords[1] =
+            clamp(formation[p].position.coords[1], -1, 1);
+      }
+    }
+
+    iterations++;
+  }
+
+  for (int x = 0; x < player_count; x++) {
+    DO_VALIDATION;
+    if (f.empty()) {
+      DO_VALIDATION;
+      formation[x].start_position = formation[x].position;
+    } else {
+      formation[x].start_position = f[x].start_position;
+      formation[x].lazy = f[x].lazy;
+      formation[x].role = f[x].role;
+      formation[x].controllable = f[x].controllable;
+    }
+  }
+
+  // team tactics
+
+  tree = loader.Load(tacticsString);
+
+  iter = tree.children.begin();
+  while (iter != tree.children.end()) {
+    DO_VALIDATION;
+    tactics.userProperties.Set((*iter).first,
+                               atof((*iter).second.value.c_str()));
+    iter++;
+  }
+  // factory tactics
+
+  tree = loader.Load(factoryTacticsString);
+  // load players
+  playerData.push_back(new PlayerData(398, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(11, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(254, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(320, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(103, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(188, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(74, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(332, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(290, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(391, teamDatabaseID == 3));
+  playerData.push_back(new PlayerData(264, teamDatabaseID == 3));
+  playerData.resize(player_count);
+}
+
 FormationEntry TeamData::GetFormationEntry(int num) const {
   assert(num >= 0 && num < formation.size());
   return formation[num];

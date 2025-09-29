@@ -21,8 +21,25 @@
 #include <algorithm>
 
 MatchData::MatchData()
-    : teamData{TeamData(3, GetScenarioConfig().left_team),
-               TeamData(8, GetScenarioConfig().right_team)} {
+    : teamData{
+          TeamData(GetScenarioConfig().left_team_name,
+                   GetScenarioConfig().left_team_short_name,
+                   Vector3(GetScenarioConfig().left_team_color[0],
+                           GetScenarioConfig().left_team_color[1],
+                           GetScenarioConfig().left_team_color[2]),
+                   Vector3(GetScenarioConfig().left_team_color[0],
+                           GetScenarioConfig().left_team_color[1],
+                           GetScenarioConfig().left_team_color[2]),
+                   GetScenarioConfig().left_team),
+          TeamData(GetScenarioConfig().right_team_name,
+                   GetScenarioConfig().right_team_short_name,
+                   Vector3(GetScenarioConfig().right_team_color[0],
+                           GetScenarioConfig().right_team_color[1],
+                           GetScenarioConfig().right_team_color[2]),
+                   Vector3(GetScenarioConfig().right_team_color[0],
+                           GetScenarioConfig().right_team_color[1],
+                           GetScenarioConfig().right_team_color[2]),
+                   GetScenarioConfig().right_team)} {
   goalCount[0] = 0;
   goalCount[1] = 0;
 

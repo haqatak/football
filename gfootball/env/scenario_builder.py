@@ -76,6 +76,12 @@ class Scenario(object):
     self._scenario_cfg.real_time = self._config['real_time']
     self._scenario_cfg.left_agents = self._config.number_of_left_players()
     self._scenario_cfg.right_agents = self._config.number_of_right_players()
+    self._scenario_cfg.left_team_name = self._config['left_team_name']
+    self._scenario_cfg.right_team_name = self._config['right_team_name']
+    self._scenario_cfg.left_team_short_name = self._config['left_team_short_name']
+    self._scenario_cfg.right_team_short_name = self._config['right_team_short_name']
+    self._scenario_cfg.left_team_color = self._config['left_team_color']
+    self._scenario_cfg.right_team_color = self._config['right_team_color']
     # This is needed to record 'game_engine_random_seed' in the dump.
     if 'game_engine_random_seed' not in self._config._values:
       self._config.set_scenario_value('game_engine_random_seed',

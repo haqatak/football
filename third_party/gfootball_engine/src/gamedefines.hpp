@@ -340,5 +340,6 @@ struct ForceSpot {
   float scale = 0.0f; // scaled #meters until effect is almost decimated
 };
 
-void GetVertexColors(std::map<Vector3, Vector3> &colorCoords);
+void GetVertexColors(std::map<Vector3, Vector3> &colorCoords,
+                     const Vector3 &color1, const Vector3 &color2);
 #endif

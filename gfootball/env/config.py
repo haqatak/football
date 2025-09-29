@@ -97,7 +97,13 @@ class Config(object):
         'tracesdir': os.path.join(tempfile.gettempdir(), 'dumps'),
         'video_format': 'avi',
         'video_quality_level': 0,  # 0 - low, 1 - medium, 2 - high
-        'write_video': False
+        'write_video': False,
+        'left_team_name': 'Red Team',
+        'right_team_name': 'Blue Team',
+        'left_team_short_name': 'RED',
+        'right_team_short_name': 'BLU',
+        'left_team_color': [0.8, 0.2, 0.2],
+        'right_team_color': [0.2, 0.2, 0.8]
     }
     self._values['render_resolution_y'] = int(
         0.5625 * self._values['render_resolution_x'])

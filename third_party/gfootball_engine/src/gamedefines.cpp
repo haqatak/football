@@ -29,7 +29,8 @@ struct index3 {
   int index[3];
 };
 
-void GetVertexColors(std::map<Vector3, Vector3> &colorCoords) {
+void GetVertexColors(std::map<Vector3, Vector3> &colorCoords,
+                     const Vector3 &color1, const Vector3 &color2) {
   DO_VALIDATION;
   std::vector<Vector3> vertices;
   std::vector<Vector3> colors;
@@ -106,6 +107,16 @@ void GetVertexColors(std::map<Vector3, Vector3> &colorCoords) {
         bla.coords[0] = std::round(bla.coords[0]);
         bla.coords[1] = std::round(bla.coords[1]);
         bla.coords[2] = std::round(bla.coords[2]);
+        if (bla.coords[0] == 255 && bla.coords[1] == 0 && bla.coords[2] == 0) {
+          bla.coords[0] = color1.coords[0] * 255;
+          bla.coords[1] = color1.coords[1] * 255;
+          bla.coords[2] = color1.coords[2] * 255;
+        } else if (bla.coords[0] == 0 && bla.coords[1] == 0 &&
+                   bla.coords[2] == 255) {
+          bla.coords[0] = color2.coords[0] * 255;
+          bla.coords[1] = color2.coords[1] * 255;
+          bla.coords[2] = color2.coords[2] * 255;
+        }
         colors.push_back(bla);
       }
 
