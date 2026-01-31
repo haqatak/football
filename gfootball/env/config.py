@@ -103,7 +103,9 @@ class Config(object):
         'left_team_short_name': 'RED',
         'right_team_short_name': 'BLU',
         'left_team_color': [0.8, 0.2, 0.2],
-        'right_team_color': [0.2, 0.2, 0.8]
+        'right_team_color': [0.2, 0.2, 0.8],
+        'left_team_color2': [0.4, 0.1, 0.1],
+        'right_team_color2': [0.1, 0.1, 0.4]
     }
     self._values['render_resolution_y'] = int(
         0.5625 * self._values['render_resolution_x'])

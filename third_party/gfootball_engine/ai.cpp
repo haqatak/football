@@ -201,17 +201,24 @@ BOOST_PYTHON_MODULE(_gameplayfootball) {
       .def_readonly("controllable_left_players",
                     &ScenarioConfig::ControllableLeftPlayers)
       .def_readonly("controllable_right_players",
-                    &ScenarioConfig::ControllableRightPlayers);
+                    &ScenarioConfig::ControllableRightPlayers)
+      .def_readwrite("left_team_color", &ScenarioConfig::left_team_color)
+      .def_readwrite("right_team_color", &ScenarioConfig::right_team_color)
+      .def_readwrite("left_team_color2", &ScenarioConfig::left_team_color2)
+      .def_readwrite("right_team_color2", &ScenarioConfig::right_team_color2);
 
   class_<std::vector<FormationEntry> >("FormationEntryVec").def(
       vector_indexing_suite<std::vector<FormationEntry> >());
 
   class_<FormationEntry>("FormationEntry",
                          init<float, float, e_PlayerRole, bool, bool>())
+      .def(init<float, float, e_PlayerRole, bool, bool, int, std::vector<float>>())
       .def_readonly("role", &FormationEntry::role)
       .add_property("position", &FormationEntry::position_env)
       .def_readwrite("lazy", &FormationEntry::lazy)
-      .def_readwrite("controllable", &FormationEntry::controllable);
+      .def_readwrite("controllable", &FormationEntry::controllable)
+      .def_readwrite("kit_no", &FormationEntry::kit_no)
+      .def_readwrite("player_stats", &FormationEntry::player_stats);
 
   enum_<e_PlayerRole>("e_PlayerRole")
       .value("e_PlayerRole_GK", e_PlayerRole::e_PlayerRole_GK)
