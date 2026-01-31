@@ -506,6 +506,16 @@ PlayerData::PlayerData(int playerDatabaseID, bool left_team) {
   UpdateValues();
 }
 
+PlayerData::PlayerData(const std::vector<float>& statsVec) : PlayerData() {
+  DO_VALIDATION;
+  if (statsVec.size() == player_stat_max) {
+    for (int i = 0; i < player_stat_max; i++) {
+        stats.Set((PlayerStat)i, statsVec[i]);
+    }
+  }
+  UpdateValues();
+}
+
 PlayerData::PlayerData() {
   DO_VALIDATION;
   // officials, for example, use this constructor

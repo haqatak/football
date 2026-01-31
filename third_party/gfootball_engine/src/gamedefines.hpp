@@ -265,11 +265,24 @@ struct FormationEntry {
         controllable(controllable) {
     DO_VALIDATION;
   }
+  FormationEntry(float x, float y, e_PlayerRole role, bool lazy,
+                 bool controllable, int kit_no, const std::vector<float>& player_stats)
+      : position(x, y * FORMATION_Y_SCALE, 0),
+        start_position(x, y * FORMATION_Y_SCALE, 0),
+        role(role),
+        lazy(lazy),
+        controllable(controllable),
+        kit_no(kit_no),
+        player_stats(player_stats) {
+    DO_VALIDATION;
+  }
   bool operator == (const FormationEntry& f) const {
     return role == f.role &&
         lazy == f.lazy &&
         position == f.position &&
-        controllable == f.controllable;
+        controllable == f.controllable &&
+        kit_no == f.kit_no &&
+        player_stats == f.player_stats;
   }
   Vector3 position_env() { DO_VALIDATION;
     return Vector3(position.coords[0],
@@ -282,6 +295,8 @@ struct FormationEntry {
     state->process(start_position);
     state->process(lazy);
     state->process(controllable);
+    state->process(kit_no);
+    state->process(player_stats);
   }
   Vector3 position; // adapted to player role (combination of databasePosition and hardcoded role position)
   Vector3 start_position;
@@ -289,6 +304,8 @@ struct FormationEntry {
   bool lazy = false; // Computer doesn't perform any actions for lazy player.
   // Can be controlled by the player?
   bool controllable = true;
+  int kit_no = 0;
+  std::vector<float> player_stats;
 };
 
 struct PlayerImage {

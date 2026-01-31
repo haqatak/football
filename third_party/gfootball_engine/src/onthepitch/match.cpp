@@ -128,7 +128,9 @@ Match::Match(MatchData *matchData, const std::vector<AIControlledKeyboard *> &co
   Vector3 left_color1 = Vector3(GetScenarioConfig().left_team_color[0],
                                 GetScenarioConfig().left_team_color[1],
                                 GetScenarioConfig().left_team_color[2]);
-  Vector3 left_color2 = left_color1 * 0.5;
+  Vector3 left_color2 = Vector3(GetScenarioConfig().left_team_color2[0],
+                                GetScenarioConfig().left_team_color2[1],
+                                GetScenarioConfig().left_team_color2[2]);
   GetVertexColors(leftColorCoords, left_color1, left_color2);
   teams[first_team]->InitPlayers(GetContext().fullbodyNode, leftColorCoords);
 
@@ -136,7 +138,9 @@ Match::Match(MatchData *matchData, const std::vector<AIControlledKeyboard *> &co
   Vector3 right_color1 = Vector3(GetScenarioConfig().right_team_color[0],
                                  GetScenarioConfig().right_team_color[1],
                                  GetScenarioConfig().right_team_color[2]);
-  Vector3 right_color2 = right_color1 * 0.5;
+  Vector3 right_color2 = Vector3(GetScenarioConfig().right_team_color2[0],
+                                 GetScenarioConfig().right_team_color2[1],
+                                 GetScenarioConfig().right_team_color2[2]);
   GetVertexColors(rightColorCoords, right_color1, right_color2);
   teams[second_team]->InitPlayers(GetContext().fullbodyNode, rightColorCoords);
 

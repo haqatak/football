@@ -82,6 +82,10 @@ class Scenario(object):
     self._scenario_cfg.right_team_short_name = self._config['right_team_short_name']
     self._scenario_cfg.left_team_color = self._config['left_team_color']
     self._scenario_cfg.right_team_color = self._config['right_team_color']
+    if 'left_team_color2' in self._config:
+      self._scenario_cfg.left_team_color2 = self._config['left_team_color2']
+    if 'right_team_color2' in self._config:
+      self._scenario_cfg.right_team_color2 = self._config['right_team_color2']
     # This is needed to record 'game_engine_random_seed' in the dump.
     if 'game_engine_random_seed' not in self._config._values:
       self._config.set_scenario_value('game_engine_random_seed',
@@ -102,7 +106,7 @@ class Scenario(object):
   def SetTeam(self, team):
     self._active_team = team
 
-  def AddPlayer(self, x, y, role, lazy=False, controllable=True):
+  def AddPlayer(self, x, y, role, lazy=False, controllable=True, kit_no=0, player_stats=None):
     """Build player for the current scenario.
 
     Args:
@@ -111,8 +115,12 @@ class Scenario(object):
       role: Player's role in the game (goal keeper etc.).
       lazy: Computer doesn't perform any automatic actions for lazy player.
       controllable: Whether player can be controlled.
+      kit_no: Player kit number.
+      player_stats: List of player stats (optional).
     """
-    player = Player(x, y, role, lazy, controllable)
+    if player_stats is None:
+      player_stats = []
+    player = Player(x, y, role, lazy, controllable, kit_no, libgame.FloatVec(player_stats))
     if self._active_team == Team.e_Left:
       self._scenario_cfg.left_team.append(player)
     else:
