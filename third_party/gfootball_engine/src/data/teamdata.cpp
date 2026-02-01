@@ -256,6 +256,8 @@ TeamData::TeamData(int teamDatabaseID, const std::vector<FormationEntry> &f) {
       formation[x].lazy = f[x].lazy;
       formation[x].role = f[x].role;
       formation[x].controllable = f[x].controllable;
+      formation[x].kit_no = f[x].kit_no;
+      formation[x].player_stats = f[x].player_stats;
     }
   }
 
@@ -274,18 +276,15 @@ TeamData::TeamData(int teamDatabaseID, const std::vector<FormationEntry> &f) {
 
   tree = loader.Load(factoryTacticsString);
   // load players
-  playerData.push_back(new PlayerData(398, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(11, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(254, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(320, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(103, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(188, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(74, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(332, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(290, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(391, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(264, teamDatabaseID == 3));
-  playerData.resize(player_count);
+  int ids[] = {398, 11, 254, 320, 103, 188, 74, 332, 290, 391, 264};
+  for (int i = 0; i < player_count; i++) {
+    if (!formation[i].player_stats.empty()) {
+      playerData.push_back(new PlayerData(formation[i].player_stats));
+    } else {
+      int id = (i < 11) ? ids[i] : ids[0];
+      playerData.push_back(new PlayerData(id, teamDatabaseID == 3));
+    }
+  }
 }
 
 TeamData::~TeamData() {
@@ -462,6 +461,8 @@ TeamData::TeamData(const std::string &name, const std::string &shortName,
       formation[x].lazy = f[x].lazy;
       formation[x].role = f[x].role;
       formation[x].controllable = f[x].controllable;
+      formation[x].kit_no = f[x].kit_no;
+      formation[x].player_stats = f[x].player_stats;
     }
   }
 
@@ -480,18 +481,15 @@ TeamData::TeamData(const std::string &name, const std::string &shortName,
 
   tree = loader.Load(factoryTacticsString);
   // load players
-  playerData.push_back(new PlayerData(398, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(11, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(254, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(320, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(103, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(188, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(74, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(332, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(290, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(391, teamDatabaseID == 3));
-  playerData.push_back(new PlayerData(264, teamDatabaseID == 3));
-  playerData.resize(player_count);
+  int ids[] = {398, 11, 254, 320, 103, 188, 74, 332, 290, 391, 264};
+  for (int i = 0; i < player_count; i++) {
+    if (!formation[i].player_stats.empty()) {
+      playerData.push_back(new PlayerData(formation[i].player_stats));
+    } else {
+      int id = (i < 11) ? ids[i] : ids[0];
+      playerData.push_back(new PlayerData(id, teamDatabaseID == 3));
+    }
+  }
 }
 
 FormationEntry TeamData::GetFormationEntry(int num) const {

@@ -158,6 +158,8 @@ struct ScenarioConfig {
     state->process(right_team_short_name);
     state->process(left_team_color);
     state->process(right_team_color);
+    state->process(left_team_color2);
+    state->process(right_team_color2);
   }
 
   void ProcessState(EnvState* state) {
@@ -211,6 +213,8 @@ struct ScenarioConfig {
   std::string right_team_short_name;
   std::vector<float> left_team_color;
   std::vector<float> right_team_color;
+  std::vector<float> left_team_color2;
+  std::vector<float> right_team_color2;
 
  private:
   ScenarioConfig() {
@@ -220,6 +224,12 @@ struct ScenarioConfig {
     right_team_color.push_back(0.2f);
     right_team_color.push_back(0.2f);
     right_team_color.push_back(0.8f);
+    left_team_color2.push_back(0.4f);
+    left_team_color2.push_back(0.1f);
+    left_team_color2.push_back(0.1f);
+    right_team_color2.push_back(0.1f);
+    right_team_color2.push_back(0.1f);
+    right_team_color2.push_back(0.4f);
   }
   void ComputeCache() {
     if (cache_computed) {

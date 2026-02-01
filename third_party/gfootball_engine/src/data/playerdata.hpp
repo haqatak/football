@@ -49,6 +49,7 @@ class PlayerData {
 
   public:
     PlayerData(int playerDatabaseID, bool left_team);
+    PlayerData(const std::vector<float>& stats);
     PlayerData();
     virtual ~PlayerData();
     std::string GetLastName() const { return lastName; }
