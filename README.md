@@ -112,6 +112,37 @@ To quit the game press Ctrl+C in the terminal.
 * [Running in docker](gfootball/doc/docker.md)
 * [Saving replays, logs, traces](gfootball/doc/saving_replays.md)
 * [Imitation Learning](gfootball/doc/imitation.md)
+* [Custom Teams and UI](#custom-teams-and-ui)
+
+## Gymnasium Support
+
+This environment now supports the [Gymnasium](https://gymnasium.farama.org/) API (replacing the deprecated `gym` library).
+The `FootballEnv` class follows the standard Gymnasium interface:
+* `reset(seed=None, options=None)` returns `(observation, info)`.
+* `step(action)` returns `(observation, reward, terminated, truncated, info)`.
+
+When migrating existing code, ensure you handle the new return values and arguments.
+
+## Custom Teams and UI
+
+You can now design custom teams (jersey colors, shorts colors, players stats) and simulate matches between them using a graphical user interface.
+
+### Team Editor UI
+
+To launch the Team Editor and Simulation UI, run:
+
+```shell
+streamlit run gfootball/ui/app.py
+```
+
+This interface allows you to:
+1.  **Create/Edit Teams**: Define team names, pick jersey and shorts colors.
+2.  **Manage Players**: Add or remove players, assign roles, set kit numbers, and fine-tune abilities (Physical, Technical, Mental stats).
+3.  **Simulate Matches**: Select two saved teams and run a simulation to see how they perform.
+
+### Programmatic Usage
+
+You can also use custom teams in your scripts. See `gfootball/examples/run_custom_team.py` for an example.
 
 ## Training agents to play GRF
 
